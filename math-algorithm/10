@@ -1,0 +1,17 @@
+#include<iostream>
+using namespace std;
+ 
+int main(){
+  int N;
+  #表現できるの違い
+  #int -> 2^31 - 1 :  long -> 2^31 - 1 : long long -> 2^63 - 1
+  long long a=1;
+  
+  cin >> N;
+  for(int i=2;i<=N;i++){
+    a*=i;
+  }
+  
+  cout << a << endl;
+  
+  ret
