@@ -23,7 +23,7 @@ import argparse
 from sklearn.metrics import classification_report
 
 
-def input_create(loader,x_name,y_name):
+def input_create(loader,x_name,y_name,mode):
     x=[]
     y=[]
     for i, data in enumerate(loader, 0):
@@ -57,7 +57,8 @@ def input_create(loader,x_name,y_name):
         #順番入れ替え
         out = torch.transpose(out, 0, 1)
         # print(out.shape)
-        label = torch.eye(11)[label] 
+        if mode=="train":
+            label = torch.eye(11)[label] 
         # print(label)
         # x.append(out.detach().numpy())
         # y.append(label.detach().numpy())
@@ -80,8 +81,11 @@ numpy.set_printoptions(threshold=numpy.inf)
 #input = torch.rand(1, 1, 28, 28)
 train_loader, class_names = load_test.load_train()
 val_loader,class_names=load_test.load_val()
+test_loader,class_names=load_test.load_test()
 
 
-input_create(train_loader,"./conv_save/train_inputs.txtfile", "./conv_save/train_labels.txtfile")
-input_create(val_loader, "./conv_save/val_inputs.txtfile", "./conv_save/val_labels.txtfile")
-# input_create(val_loader, "./conv_save/val_labels.txtfile",)
+# input_create(train_loader,"./conv_save/train_inputs.txtfile", "./conv_save/train_labels.txtfile")
+# input_create(val_loader, "./conv_save/val_inputs.txtfile", "./conv_save/val_labels.txtfile")
+# input_create(test_loader, "./conv_save/test_inputs.txtfile","./conv_save/test_labels.txtfile","test")
+input_create(train_loader,"./conv_save/train_inputs_nasi.txtfile", "./conv_save/train_labels_tsne.txtfile","test")
+input_create(val_loader, "./conv_save/val_inputs_nasi.txtfile", "./conv_save/val_labels_tsne.txtfile","test")
