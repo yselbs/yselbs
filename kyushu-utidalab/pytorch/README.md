@@ -1,3 +1,8 @@
+#いつか書きます
+#下のは、引っ張ってきたもの
+
+
+
 # PyTorch + CIFAR10 + ResNet18
 This library makes a ResNet18 model classifing CIFAR10 with PyTorch.
 
