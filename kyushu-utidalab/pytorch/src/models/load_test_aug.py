@@ -48,7 +48,8 @@ def load_val():
 
     data_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize(mean=[.5], std=[.5])
+        transforms.Normalize(mean=[.5], std=[.5]),
+        transforms.RandomRotation(degrees=[15,15])
     ])
 
     #load the data
@@ -86,7 +87,8 @@ def load_train():
 
     data_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize(mean=[.5], std=[.5])
+        transforms.Normalize(mean=[.5], std=[.5]),
+        transforms.RandomRotation(degrees=[15,15])
     ])
 
     #load the data
@@ -126,7 +128,8 @@ def load_test():
 
     data_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize(mean=[.5], std=[.5])
+        transforms.Normalize(mean=[.5], std=[.5]),
+        transforms.RandomRotation(degrees=[15,15])
     ])
 
     #load the data
