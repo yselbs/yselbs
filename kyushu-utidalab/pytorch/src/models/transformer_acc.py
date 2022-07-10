@@ -187,10 +187,11 @@ def train(x,y):
     model.train()
     total_loss = 0.0
     total_samples = len(x)
-
+    train_total=13940
+    correct = 0 
     optimizer=optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
     for data, label in tqdm(zip(x,y),leave = False):
-        correct = 0 
+  
         optimizer.zero_grad()
         data = data.to(device)  #GT*** #to(device)でデータをGPUに載せる
         label = label.to(device)
@@ -221,9 +222,9 @@ def train(x,y):
         correct += (predicted == labels).sum().item()
         # 0スタートで10刻みにするため
         # if i % 10 == 9 and i != 0:    # print every 2000 mini-batches
-        print(
-            f'[{epoch + 1}] train_loss: {total_loss / batch_size:.3f}, train_acc:{100 * correct / batch_size:3f}')
-    avg_loss = total_loss / total_samples
+    print(
+        f'[{epoch + 1}] loss: {total_loss / train_total:.3f}, acc:{100 * correct / train_total:3f}')
+    avg_loss = total_loss / train_total
         # #    loss_history.append(avg_loss)
         # print('Average train loss: ' + '{:.10f}'.format(avg_loss))
     return avg_loss
@@ -234,10 +235,11 @@ def val(x,y):
     model=ViT(image_size=1, num_classes=11, dim=512, depth=1, heads=8, mlp_dim=1024, pool = 'cls', dim_head = 64, dropout = 0., emb_dropout = 0.).to(device)
     model.eval()
     total_loss = 0.0
+    correct = 0 
     total_samples = len(x)
+    val_total=2452
     optimizer=optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
     for data, label in tqdm(zip(x,y),leave = False):
-        correct = 0 
         optimizer.zero_grad()
         data = data.to(device)  #GT*** #to(device)でデータをGPUに載せる
         label = label.to(device)
@@ -256,21 +258,23 @@ def val(x,y):
         loss.backward()
         del loss
         optimizer.step()
-    _, predicted = torch.max(output.data, 1)
-    _, labels = torch.max(label.data, 1)
-    # predicted=labelを数えている
-    correct += (predicted == labels).sum().item()
-    # 0スタートで10刻みにするため
-    # if i % 10 == 9 and i != 0:    # print every 2000 mini-batches
-    print("")
+
+        # # n_dataは入力データの総数
+        # n_data += data.size(0)
+        # outputの最大値のラベルを抽出している(_, )　_には値が入っている　１はaxis=1ということ
+        #.dataは勾配情報を取り除く
+        _, predicted = torch.max(output.data, 1)
+        _, labels = torch.max(label.data, 1)
+        # predicted=labelを数えている
+        correct += (predicted == labels).sum().item()
+        # 0スタートで10刻みにするため
+        # if i % 10 == 9 and i != 0:    # print every 2000 mini-batches
     print(
-        f'[{epoch + 1}] val_loss: {total_loss / batch_size:.3f}, val_acc:{100 * correct / batch_size:3f}')
-    # avg_loss = total_loss / total_samples
-    # # #    loss_history.append(avg_loss)
-    #  # print('Average train loss: ' + '{:.10f}'.format(avg_loss))
-    val_avg_loss = total_loss / total_samples
+        f'[{epoch + 1}] loss: {total_loss / val_total:.3f}, acc:{100 * correct / val_total:3f}')
+    val_avg_loss = total_loss / val_total
     #    loss_history.append(avg_loss)
     # print('Average train loss: ' + '{:.10f}'.format(val_avg_loss))
+
     return val_avg_loss
 
 
@@ -343,6 +347,7 @@ model=ViT(image_size=1, num_classes=11, dim=512, depth=1, heads=8, mlp_dim=1024,
 # Train and val.
 for epoch in range(args.n_epoch):
     # 学習　trainではmodelの中身のパラメータが知らず知らずのうちに更新されている
+    
     train_loss = train(x,y)
 	#modelはtrainで更新されたmodelを使用し、評価
 	#valの今回の実質的な役割はearly stopping
@@ -369,7 +374,7 @@ for epoch in range(args.n_epoch):
 
     # Save a model checkpoint.
     model_ckpt_path = args.model_ckpt_path_temp.format(args.dataset_name, args.model_name, epoch+1)
-    torch.save(model.state_dict(),"./model_save_trans/trans_epoch{}".format(epoch+1))
+    torch.save(model.state_dict(),"./model_save/trans_epoch{}".format(epoch+1))
     print('Saved a model checkpoint at {}'.format(epoch+1))
     print('')
 
